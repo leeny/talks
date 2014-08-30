@@ -1,236 +1,782 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Lessons from a year&#39;s worth of hiring data</title>
-    <link rel="stylesheet" type="text/css" href="../../css/cleaver.css">
-  </head>
-  <body>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Lessons from a year&#39;s worth of hiring data</title>
+  <style type="text/css">
+    body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #222;
+  background-color: #f7f7f7;
+  font-size: 100%;
+}
+
+#wrapper {
+  width: 850px;
+  height: 600px;
+  overflow: hidden;
+  margin: 80px auto 0 auto;
+}
+
+/* styles for print layout */
+#wrapper.nohide {
+  overflow: auto;
+  height: auto;
+  box-shadow: none;
+}
+
+#wrapper.nohide .slide {
+  margin-bottom: 30px;
+}
+/* /styles */
+
+.slide {
+  width: auto;
+  height: 540px;
+  padding: 30px;
+  font-weight: 200;
+  font-size: 200%;
+  line-height: 1.375;
+}
+
+.controls {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+}
+
+.controls .arrow {
+  width: 0; height: 0;
+  border: 30px solid #333;
+  float: left;
+  margin-right: 30px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.controls .prev {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+
+  border-left-width: 0;
+  border-right-width: 50px;
+}
+
+.controls .next {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-color: transparent;
+
+  border-left-width: 50px;
+  border-right-width: 0;
+}
+
+.controls .prev:hover {
+  border-right-color: #888;
+  cursor: pointer;
+}
+
+.controls .next:hover {
+  border-left-color: #888;
+  cursor: pointer;
+}
+
+.slide h1 {
+  font-size: 300%;
+  line-height: 1.2;
+  text-align: center;
+  margin: 170px 0 0;
+}
+
+.slide h2 {
+  font-size: 100%;
+  line-height: 1.2;
+  margin: 5px 0;
+  text-align: center;
+  font-weight: 200;
+}
+
+.slide h3 {
+  font-size: 140%;
+  line-height: 1.2;
+  border-bottom: 1px solid #aaa;
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+.slide ul {
+  padding: 20px 0 0 60px;
+  font-weight: 200;
+  line-height: 1.375;
+}
+
+.slide .author h1.name {
+  font-size: 170%;
+  font-weight: 200;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.slide .author h3 {
+  font-weight: 100;
+  text-align: center;
+  font-size: 95%;
+  border: none;
+}
+
+a {
+  text-decoration: none;
+  color: #44a4dd;
+}
+
+a:hover {
+  color: #66b5ff;
+}
+
+pre {
+  font-size: 60%;
+  line-height: 1.3;
+}
+
+code {
+  background-color: #e7e7e7;
+}
+
+pre > code {
+  background-color: inherit;
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 3px;
+  background-color: #b4b4b4;
+
+  -webkit-transition: width 0.1s ease-out;
+  -moz-transition: width 0.1s ease-out;
+  -o-transition: width 0.1s ease-out;
+  transition: width 0.1s ease-out;
+}
+
+@media (max-width: 850px) {
+  #wrapper {
+    width: auto;
+  }
+
+  body {
+    font-size: 70%;
+  }
+
+  img {
+    width: 100%;
+  }
+
+  .slide h1 {
+    margin-top: 120px;
+  }
+
+  .controls .prev, .controls .prev:hover {
+    border-right-color: rgba(135, 135, 135, 0.5);
+  }
+
+  .controls .next, .controls .next:hover {
+    border-left-color: rgba(135, 135, 135, 0.5);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 50%;
+    overflow: hidden;
+  }
+
+  #wrapper {
+    margin-top: 10px;
+    height: 340px;
+  }
+
+  .slide {
+    padding: 10px;
+    height: 340px;
+  }
+
+  .slide h1 {
+    margin-top: 50px;
+  }
+
+  .slide ul {
+    padding-left: 25px;
+  }
+}
+
+/*
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+*/
+
+pre code {
+  display: block; padding: 0.5em;
+  color: #333;
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}
+
+.slide h1 {
+	font-size: 200%;
+	margin-top: 130px;
+}
+
+.slide ul {
+	font-size: 66%;
+	padding-top: 0px;
+	font-weight: 400;
+}
+  </style>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script>
+
+  // Callback that creates and populates a data table,
+  // instantiates the pie chart, passes in the data and
+  // draws it.
+  function drawPValuesChart(divName) {
+    // Create the data table.
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Resume Features');
+    data.addColumn('number', 'Effect size');
+    data.addColumn({type: 'string', role: 'tooltip'});
+    data.addRows([
+      ['Frequency of errors/typos', 0.729, 'Effect size = 0.729, P = 0.000132'],  
+      ['Top company', 0.183, 'Effect size = 0.183, P = .00480'],
+      ['Can tell what did?', 0.122, 'Effect size = 0.122, P = .0479'],
+      ['GPA', 0, ''],
+      ['Highest degree earned', 0, ''],
+      ['BS in CS from top school', 0, ''],
+      ['Resume length', 0, ''],
+      ['Frequency of buzzwords', 0, ''],
+      ['Personal projects', 0, '']
+    ]);
+
+    // Set chart options
+    var options = {title:'Effect Size of Resume Features',
+                   width:790,
+                   height:510,
+                   legend: {position: 'none'},
+                   vAxis: {title: 'Effect size'},
+                   hAxis: {title: 'Resume Feature', gridlines: {count: 10}},
+                   chartArea: {top:50},
+                   backgroundColor: { fill:'transparent' }
+                  };
+
+    // Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.ColumnChart(document.getElementById(divName));
+    chart.draw(data, options);
+  }
+  </script>
+  <script type="text/javascript">
+    // Load the Visualization API and the piechart package.
+    google.load('visualization', '1.0', {'packages':['corechart']});
+
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.setOnLoadCallback(function() { drawPValuesChart.call(this, 'pvalues_chart_div'); drawHighestDegreeChart.call(this, 'highestdegree');});
+  </script>
+</head>
+<body>
     <div class="progress">
-       <div class="progress-bar"></div>
-    </div>
+    <div class="progress-bar"></div>
+  </div>
 
-    <div id="wrapper">
-        <section class="slide">
-          <h1 id="lessons-from-a-year-s-worth-of-hiring-data">Lessons from a year&#39;s worth of hiring data</h1>
-          <h2 id="which-resume-attributes-have-the-strongest-signal-">Which resume attributes have the strongest signal?</h2>
-          <p><p></p></p>
-          <h2 id="http-www-alinelerner-com-datameetup-slides-"><a href="http://www.alinelerner.com/talks/datameetup">http://www.alinelerner.com/talks/datameetup</a> (slides)</h2>
-          <p><p></p></p>
-          <h2 id="http-blog-alinelerner-com-lessons-from-a-years-worth-of-hiring-data-loooong-blog-post-"><a href="http://blog.alinelerner.com/lessons-from-a-years-worth-of-hiring-data/">http://blog.alinelerner.com/lessons-from-a-years-worth-of-hiring-data/</a> (loooong blog post)</h2>
-          </section>
-              <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-          </section>
-              <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-          <ul>
-            <li><strong>BS in CS from a top school</strong></li>
-          </ul>
-      </section>
-        <section class="slide">
-          <h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-          <ul>
-            <li><p>BS in CS from a top school</p>
-            </li>
-            <li><p><strong>Frequency of buzzwords</strong></p>
-            </li>
-          </ul>
-      </section>
-      <section class="slide">
-        <h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-        <ul>
-          <li><p>BS in CS from a top school</p>
-          </li>
-          <li><p>Frequency of buzzwords</p>
-          </li>
-          <li><p><strong>Highest degree earned</strong></p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-        <ul>
-          <li><p>BS in CS from a top school</p>
-          </li>
-          <li><p>Frequency of buzzwords</p>
-          </li>
-          <li><p>Highest degree earned</p>
-          </li>
-          <li><p><strong>Resume length</strong></p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-        <ul>
-          <li><p>BS in CS from a top school</p>
-          </li>
-          <li><p>Frequency of buzzwords</p>
-          </li>
-          <li><p>Highest degree earned</p>
-          </li>
-          <li><p>Resume length</p>
-          </li>
-          <li><p><strong>Personal projects</strong></p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-        <ul>
-          <li><p>BS in CS from a top school</p>
-          </li>
-          <li><p>Frequency of buzzwords</p>
-          </li>
-          <li><p>Highest degree earned</p>
-          </li>
-          <li><p>Resume length</p>
-          </li>
-          <li><p>Personal projects</p>
-          </li>
-          <li><p><strong>Work experience at a top company</strong></p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-        <ul>
-          <li><p>BS in CS from a top school</p>
-          </li>
-          <li><p>Frequency of buzzwords</p>
-          </li>
-          <li><p>Highest degree earned</p>
-          </li>
-          <li><p>Resume length</p>
-          </li>
-          <li><p>Personal projects</p>
-          </li>
-          <li><p>Work experience at a top company</p>
-          </li>
-          <li><p><strong>Undergraduate GPA</strong></p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-        <ul>
-          <li><p>BS in CS from a top school</p>
-          </li>
-          <li><p>Frequency of buzzwords</p>
-          </li>
-          <li><p>Highest degree earned</p>
-          </li>
-          <li><p>Resume length</p>
-          </li>
-          <li><p>Personal projects</p>
-          </li>
-          <li><p>Work experience at a top company</p>
-          </li>
-          <li><p>Undergraduate GPA</p>
-          </li>
-          <li><p><strong>Frequency of grammatical/spelling errors and syntactic inconsistencies</strong></p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="frequency-of-errors">Frequency of errors</h3>
-        <p><img src="http://blog.alinelerner.com/wp-content/uploads/2013/05/errors-visual-annotated.png" alt="Errors"></p>
-        </section>
-            <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
-        <ul>
-          <li><p>BS in CS from a top school</p>
-          </li>
-          <li><p>Frequency of buzzwords</p>
-          </li>
-          <li><p>Highest degree earned</p>
-          </li>
-          <li><p>Resume length</p>
-          </li>
-          <li><p>Personal projects</p>
-          </li>
-          <li><p>Work experience at a top company</p>
-          </li>
-          <li><p>Undergraduate GPA</p>
-          </li>
-          <li><p>Frequency of grammatical/spelling errors and syntactic inconsistencies</p>
-          </li>
-          <li><p><strong>How easy it is to tell what someone did at each of their jobs</strong></p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="how-easy-is-it-to-tell-what-someone-did-">How easy is it to tell what someone did?</h3>
-        <p><img src="http://blog.alinelerner.com/wp-content/uploads/2013/05/good_description.png" alt="Good"></p>
-        <p>vs.</p>
-        <p><img src="http://blog.alinelerner.com/wp-content/uploads/2013/05/bad_description.png" alt="Bad"></p>
-        </section>
-            <section class="slide"><h3 id="the-setup">The setup</h3>
-        <p><strong>Company</strong>: <img src="images/tp.png" alt="TrialPay"></p>
-        <p><strong>Position</strong>: Generalist software engineer</p>
-        <p><strong>Timeframe</strong>: Jan 2012 - Jan 2013</p>
-        <p><strong>Number of resumes annotated</strong>: 280</p>
-        </section>
-            <section class="slide"><h3 id="the-execution">The execution</h3>
-        <p>For each resume attribute, I ran a statistical significance test (i.e. t-test or chi-squared test).</p>
-      </section>
-      <section class="slide">
-        <h1 id="drumroll">Drumroll</h1>
-      </section>
-      <section class="slide">
-        <h3 id="the-results">The results</h3>
-        <div id="pvalues_chart_div" class="gchart"></div>
-      </section>
-      <section class="slide">
-        <h3 id="takeaways">Takeaways</h3>
-        <ul>
-          <li><p>Grammar and spelling matter a lot</p>
-          </li>
-          <li><p>Having worked somewhere fancy matters</p>
-          </li>
-          <li><p>Being able to clearly explain what you did matters</p>
-          </li>
-          <li><p>Pedigree doesn&#39;t matter</p>
-          </li>
-          <li><p>Side projects don&#39;t matter? Really?</p>
-          </li>
-        </ul>
-      </section>
-      <section class="slide">
-        <h3 id="takeaways">Takeaways</h3>
-        <ul>
-          <li><p><del>Grammar and spelling matter a lot</del></p>
-          </li>
-          <li><p><del>Having worked somewhere fancy matters</del></p>
-          </li>
-          <li><p><del>Being able to clearly explain what you did matters</del></p>
-          </li>
-          <li><p><del>Pedigree doesn&#39;t matter</del></p>
-          </li>
-          <li><p><del>Side projects don&#39;t matter? Really?</del></p>
-          </li>
-        </ul>
-        <p><strong>Need more analysis about eng hiring! Meritocracy! Inspirational ending! Huzzah!</strong></p>
-      </section>
-      <section class="slide">
-        <div class="author">
-          <h1 class="name">Aline Lerner (LLC)</h1>
-          <h3 class="twitter">
-            <a href="http://twitter.com/@alinelernerllc">@alinelernerllc</a>
-          </h3>
-          <h3 class="url">
-            <a href="http://blog.alinelerner.com">http://blog.alinelerner.com</a>
-          </h3>
-          <h3 class="email">
-            <a href="mailto:aline@alinelerner.com">aline@alinelerner.com</a>
-          </h3>
-        </div>
-      </section>
-    </div>
-    <div class="controls">
-      <div class="arrow prev"></div>
-      <div class="arrow next"></div>
-    </div>
+<div id="wrapper">
+    <section class="slide"><h1 id="lessons-from-a-year-s-worth-of-hiring-data">Lessons from a year&#39;s worth of hiring data</h1>
+<h2 id="which-resume-attributes-have-the-strongest-signal-">Which resume attributes have the strongest signal?</h2>
+<p><p></p></p>
+<h2 id="http-www-alinelerner-com-datameetup-slides-"><a href="http://www.alinelerner.com/talks/datameetup">http://www.alinelerner.com/datameetup</a> (slides)</h2>
+<p><p></p></p>
+<h2 id="http-blog-alinelerner-com-lessons-from-a-years-worth-of-hiring-data-loooong-blog-post-"><a href="http://blog.alinelerner.com/lessons-from-a-years-worth-of-hiring-data/">http://blog.alinelerner.com/lessons-from-a-years-worth-of-hiring-data/</a> (loooong blog post)</h2>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><strong>BS in CS from a top school</strong></li>
+</ul>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p><strong>Frequency of buzzwords</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p>Frequency of buzzwords</p>
+</li>
+<li><p><strong>Highest degree earned</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p>Frequency of buzzwords</p>
+</li>
+<li><p>Highest degree earned</p>
+</li>
+<li><p><strong>Resume length</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p>Frequency of buzzwords</p>
+</li>
+<li><p>Highest degree earned</p>
+</li>
+<li><p>Resume length</p>
+</li>
+<li><p><strong>Personal projects</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p>Frequency of buzzwords</p>
+</li>
+<li><p>Highest degree earned</p>
+</li>
+<li><p>Resume length</p>
+</li>
+<li><p>Personal projects</p>
+</li>
+<li><p><strong>Work experience at a top company</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p>Frequency of buzzwords</p>
+</li>
+<li><p>Highest degree earned</p>
+</li>
+<li><p>Resume length</p>
+</li>
+<li><p>Personal projects</p>
+</li>
+<li><p>Work experience at a top company</p>
+</li>
+<li><p><strong>Undergraduate GPA</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p>Frequency of buzzwords</p>
+</li>
+<li><p>Highest degree earned</p>
+</li>
+<li><p>Resume length</p>
+</li>
+<li><p>Personal projects</p>
+</li>
+<li><p>Work experience at a top company</p>
+</li>
+<li><p>Undergraduate GPA</p>
+</li>
+<li><p><strong>Frequency of grammatical/spelling errors and syntactic inconsistencies</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="frequency-of-errors">Frequency of errors</h3>
+<p><img src="http://blog.alinelerner.com/wp-content/uploads/2013/05/errors-visual-annotated.png" alt="Errors"></p>
+</section>
+    <section class="slide"><h3 id="what-resume-attributes-might-be-signals-of-success-">What resume attributes might be signals of success?</h3>
+<ul>
+<li><p>BS in CS from a top school</p>
+</li>
+<li><p>Frequency of buzzwords</p>
+</li>
+<li><p>Highest degree earned</p>
+</li>
+<li><p>Resume length</p>
+</li>
+<li><p>Personal projects</p>
+</li>
+<li><p>Work experience at a top company</p>
+</li>
+<li><p>Undergraduate GPA</p>
+</li>
+<li><p>Frequency of grammatical/spelling errors and syntactic inconsistencies</p>
+</li>
+<li><p><strong>How easy it is to tell what someone did at each of their jobs</strong></p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="how-easy-is-it-to-tell-what-someone-did-">How easy is it to tell what someone did?</h3>
+<p><img src="http://blog.alinelerner.com/wp-content/uploads/2013/05/good_description.png" alt="Good"></p>
+<p>vs.</p>
+<p><img src="http://blog.alinelerner.com/wp-content/uploads/2013/05/bad_description.png" alt="Bad"></p>
+</section>
+    <section class="slide"><h3 id="the-setup">The setup</h3>
+<p><strong>Company</strong>: <img src="images/tp.png" alt="TrialPay"></p>
+<p><strong>Position</strong>: Generalist software engineer</p>
+<p><strong>Timeframe</strong>: Jan 2012 - Jan 2013</p>
+<p><strong>Number of resumes annotated</strong>: 280</p>
+</section>
+    <section class="slide"><h3 id="the-execution">The execution</h3>
+<p>For each resume attribute, I ran a statistical significance test (i.e. t-test or chi-squared test).</p>
+</section>
+    <section class="slide"><h1 id="drumroll">Drumroll</h1>
+</section>
+    <section class="slide"><h3 id="the-results">The results</h3>
+ <div id="pvalues_chart_div" class="gchart"></div></section>
+    <section class="slide"><h3 id="takeaways">Takeaways</h3>
+<ul>
+<li><p>Grammar and spelling matter a lot</p>
+</li>
+<li><p>Having worked somewhere fancy matters</p>
+</li>
+<li><p>Being able to clearly explain what you did matters</p>
+</li>
+<li><p>Pedigree doesn&#39;t matter</p>
+</li>
+<li><p>Side projects don&#39;t matter? Really?</p>
+</li>
+</ul>
+</section>
+    <section class="slide"><h3 id="takeaways">Takeaways</h3>
+<ul>
+<li><p><del>Grammar and spelling matter a lot</del></p>
+</li>
+<li><p><del>Having worked somewhere fancy matters</del></p>
+</li>
+<li><p><del>Being able to clearly explain what you did matters</del></p>
+</li>
+<li><p><del>Pedigree doesn&#39;t matter</del></p>
+</li>
+<li><p><del>Side projects don&#39;t matter? Really?</del></p>
+</li>
+</ul>
+<p><strong>Need more analysis about eng hiring! Meritocracy! Inspirational ending! Huzzah!</strong></p>
+</section>
+    <section class="slide"><div class="author">
+  <h1 class="name">Aline Lerner (LLC)</h1>
+    <h3 class="twitter">
+      <a href="http://twitter.com/@alinelernerllc">@alinelernerllc</a>
+    </h3>
+    <h3 class="url">
+      <a href="http://blog.alinelerner.com">http://blog.alinelerner.com</a>
+    </h3>
+    <h3 class="email">
+      <a href="mailto:aline@alinelerner.com">aline@alinelerner.com</a>
+    </h3>
+</div>
+</section>
+</div>
+  <div class="controls">
+    <div class="arrow prev"></div>
+    <div class="arrow next"></div>
+  </div>
 
-    <script type="text/javascript" src="../../js/cleaver.js"></script>
-  </body>
+
+  <script type="text/javascript">
+    /**
+ * Takes the last slide and places it at the front.
+ */
+function goBack() {
+  var wrapper = document.querySelector('#wrapper');
+  var lastSlide = wrapper.lastChild;
+  while (lastSlide != null && lastSlide.nodeType !== 1) {
+    lastSlide = lastSlide.previousSibling;
+  }
+
+  wrapper.removeChild(lastSlide);
+  wrapper.insertBefore(lastSlide, wrapper.firstChild);
+
+  setCurrentProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+/**
+ * Takes the first slide and places it at the end.
+ */
+function goForward() {
+  var wrapper = document.querySelector('#wrapper');
+  var firstSlide = wrapper.firstChild;
+  while (firstSlide != null && firstSlide.nodeType !== 1) {
+    firstSlide = firstSlide.nextSibling;
+  }
+
+  wrapper.removeChild(firstSlide);
+  wrapper.appendChild(firstSlide);
+
+  setCurrentProgress();
+  updateURL();
+  updateTabIndex();
+}
+
+/**
+ * Updates the current URL to include a hashtag of the current page number.
+ */
+function updateURL() {
+  window.history.replaceState({} , null, '#' + currentPage());
+}
+
+/**
+ * Returns the current page number of the presentation.
+ */
+function currentPage() {
+  return document.querySelector('#wrapper .slide').dataset.page;
+}
+
+/**
+ * Returns a NodeList of each .slide element.
+ */
+function allSlides() {
+  return document.querySelectorAll('#wrapper .slide');
+}
+
+/**
+ * Give each slide a "page" data attribute.
+ */
+function setPageNumbers() {
+  var wrapper = document.querySelector('#wrapper');
+  var pages   = wrapper.querySelectorAll('section');
+  var page;
+
+  for (var i = 0; i < pages.length; ++i) {
+    page = pages[i];
+    page.dataset.page = i;
+  }
+}
+
+/**
+ * Set the current progress indicator.
+ */
+function setCurrentProgress() {
+  var wrapper = document.querySelector('#wrapper');
+  var progressBar = document.querySelector('.progress-bar');
+
+  if (progressBar !== null) {
+    var pagesNumber    = wrapper.querySelectorAll('section').length;
+    var currentNumber  = parseInt(currentPage());
+    var currentPercent = pagesNumber === 1 ? 100 : 100 * currentNumber / (pagesNumber - 1);
+    progressBar.style.width = currentPercent.toString() + '%';
+  }
+}
+
+/**
+ * Go to the specified page of content.
+ */
+function goToPage(page) {
+  // Try to find the target slide.
+  var targetSlide = document.querySelector('#wrapper .slide[data-page="' + page + '"]');
+
+  // If it actually exists, go forward until we find it.
+  if (targetSlide) {
+    var numSlides = allSlides().length;
+
+    for (var i = 0; currentPage() != page && i < numSlides; i++) {
+      goForward();
+    }
+  }
+}
+
+/**
+ * Removes tabindex property from all links on the current slide, sets
+ * tabindex = -1 for all links on other slides. Prevents slides from appearing
+ * out of control.
+ */
+function updateTabIndex() {
+  var allLinks = document.querySelectorAll('.slide a');
+  var currentPageLinks = document.querySelector('.slide').querySelectorAll('a');
+  var i;
+
+  for (i = 0; i < allLinks.length; i++) {
+    allLinks[i].setAttribute('tabindex', -1);
+  }
+
+  for (i = 0; i < currentPageLinks.length; i++) {
+    allLinks[i].removeAttribute('tabindex');
+  }
+}
+
+window.onload = function () {
+
+  // Give each slide a "page" data attribute.
+  setPageNumbers();
+
+  // Update the tabindex to prevent weird slide transitioning
+  updateTabIndex();
+
+  // If the location hash specifies a page number, go to it.
+  var page = window.location.hash.slice(1);
+  if (page) goToPage(page);
+
+  document.onkeydown = function (e) {
+    var kc = e.keyCode;
+
+    // left, down, H, J, backspace - BACK
+    // up, right, K, L, space, enter - FORWARD
+    if (kc == 37 || kc == 40 || kc == 8 || kc == 72 || kc == 74) {
+      goBack();
+    } else if (kc == 38 || kc == 39 || kc == 13 || kc == 32 || kc == 75 || kc == 76) {
+      goForward();
+    }
+  }
+
+  if (document.querySelector('.next') && document.querySelector('.prev')) {
+    document.querySelector('.next').onclick = function (e) {
+      e.preventDefault();
+      goForward();
+    }
+
+    document.querySelector('.prev').onclick = function (e) {
+      e.preventDefault();
+      goBack();
+    }
+  }
+
+}
+
+
+  </script>
+</body>
 </html>
